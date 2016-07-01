@@ -1,25 +1,25 @@
 {
-    "name": "punarinta/email-auth",
-    "description": "Authenticate via an arbitrary email",
-    "license": "MIT",
-    "keywords": ["imap"],
-    "authors":
-    [
-        {
-            "name": "Vladimir Osipov",
-            "email": "vladimir.g.osipov@gmail.com"
-        }
-    ],
-    "require":
+  "name": "punarinta/email-auth",
+  "description": "Authenticate via an arbitrary email",
+  "license": "MIT",
+  "keywords": ["imap"],
+  "authors":
+  [
     {
-      "php": ">=5.4.0"
-    },
-    "require-dev": {},
-    "autoload":
-    {
-        "psr-4":
-        {
-            "EmailAuth\\": "src/"
-        }
+      "name": "Vladimir Osipov",
+      "email": "vladimir.g.osipov@gmail.com"
     }
+  ],
+  "require":
+  {
+    "php": ">=5.4.0"
+  },
+  "require-dev": {},
+  "autoload":
+  {
+    "psr-4":
+    {
+      "EmailAuth\\": "src/"
+    }
+  }
 }
