@@ -15,6 +15,13 @@ class Auth
 
     public $status = STATUS_NO_LOGIN;
 
+    /**
+     * Tries to find an auth server and login
+     *
+     * @param $email
+     * @param $password
+     * @return bool
+     */
     public function login($email, $password)
     {
         $this->email = $email;
@@ -60,6 +67,8 @@ class Auth
     }
 
     /**
+     * Tells if port is opened or not
+     *
      * @param $host
      * @param int $port
      * @return bool
@@ -76,6 +85,8 @@ class Auth
     }
 
     /**
+     * Tries to authenticate by logging to an IMAP server
+     *
      * @param $host
      * @param int $port
      * @return bool
