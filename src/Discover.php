@@ -21,32 +21,7 @@ class Discover
      */
     public function imap($email)
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            throw new \Exception('Not a valid email');
-        }
-
-        $host = null;
-        $domain = explode('@', $email);
-
-        if ($port = Socket::pingPort('imap.' . $domain[1], [993, 143]))
-        {
-            $host = 'imap.' . $domain[1];
-        }
-        elseif ($mxServer = Dns::getTopMx($domain[1]))
-        {
-            $mxServerDomains = explode('.', $mxServer);
-            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
-
-            if ($port = Socket::pingPort($mxServer, [993, 143]))
-            {
-                $host = $mxServer;
-            }
-            else if ($port = Socket::pingPort('imap.' . $mxServerRoot, [993, 143]))
-            {
-                $host = 'imap.' . $mxServerRoot;
-            }
-        }
+        list ($host, $port) = $this->analyse($email, 'imap.', [993, 143]);
 
         return $host ? array
         (
@@ -65,32 +40,7 @@ class Discover
      */
     public function smtp($email)
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            throw new \Exception('Not a valid email');
-        }
-
-        $host = null;
-        $domain = explode('@', $email);
-
-        if ($port = Socket::pingPort('smtp.' . $domain[1], [465, 587, 25]))
-        {
-            $host = 'smtp.' . $domain[1];
-        }
-        elseif ($mxServer = Dns::getTopMx($domain[1]))
-        {
-            $mxServerDomains = explode('.', $mxServer);
-            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
-
-            if ($port = Socket::pingPort($mxServer, [465, 587, 25]))
-            {
-                $host = $mxServer;
-            }
-            else if ($port = Socket::pingPort('smtp.' . $mxServerRoot, [465, 587, 25]))
-            {
-                $host = 'smtp.' . $mxServerRoot;
-            }
-        }
+        list ($host, $port) = $this->analyse($email, 'smtp.', [465, 587, 25]);
 
         $encTypes =
         [
@@ -105,5 +55,57 @@ class Discover
             'port'       => $port,
             'encryption' => @$encTypes[$port] ?: null,
         ) : null;
+    }
+
+    /**
+     * Discover host and port for specified prefix and ports
+     *
+     * @param $email
+     * @param $prefix
+     * @param $ports
+     * @return array
+     * @throws \Exception
+     */
+    private function analyse($email, $prefix, $ports)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            throw new \Exception('Not a valid email');
+        }
+
+        $host = null;
+        $domain = explode('@', $email);
+
+        if ($port = Socket::pingPort($prefix . $domain[1], $ports))
+        {
+            $host = $prefix . $domain[1];
+        }
+        elseif ($mxServer = Dns::getTopMx($domain[1]))
+        {
+            $mxServerDomains = explode('.', $mxServer);
+            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
+
+            if ($port = Socket::pingPort($mxServer, $ports))
+            {
+                $host = $mxServer;
+            }
+            else
+            {
+                $revMxServer = gethostbyaddr(gethostbyname($mxServer));
+                $revMxServerDomains = explode('.', $revMxServer);
+                $revMxServerRoot = @implode('.', array_slice($revMxServerDomains, -2, 2));
+
+                if ($port = Socket::pingPort($prefix . $revMxServerRoot, $ports))
+                {
+                    $host = $prefix . $revMxServerRoot;
+                }
+                else if ($port = Socket::pingPort($prefix . $mxServerRoot, $ports))
+                {
+                    $host = $prefix . $mxServerRoot;
+                }
+            }
+        }
+
+        return [$host, $port];
     }
 }
