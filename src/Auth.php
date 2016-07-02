@@ -16,11 +16,12 @@ class Auth
     const STATUS_OK             = 0;        // Successful login
     const STATUS_OAUTH_NEEDED   = 1;        // Email provider will most probably require OAuth
     const STATUS_WRONG_PASSWORD = 2;        // Wrong password
-    const STATUS_UNKNOWN        = 3;        // SMTP server was not found
+    const STATUS_UNKNOWN        = 3;        // IMAP server was not found
 
     private $email;
     private $password;
     private $config;
+    private $imapHost = null;
 
     public $status = self::STATUS_NO_LOGIN;
 
@@ -91,6 +92,38 @@ class Auth
         }
 
         return false;
+    }
+
+    /**
+     * Service function to get an address of an associated IMAP server
+     *
+     * @param $email
+     * @return null|string
+     */
+    public function imapHost($email)
+    {
+        $domain = explode('@', $email);
+
+        if ($this->pingPort('imap.' . $domain[1]))
+        {
+            $this->imapHost = 'imap.' . $domain[1];
+        }
+        elseif ($mxServer = Dns::getTopMx($domain[1]))
+        {
+            $mxServerDomains = explode('.', $mxServer);
+            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
+
+            if ($this->pingPort($mxServer))
+            {
+                $this->imapHost = $mxServer;
+            }
+            else if ($this->pingPort('imap.' . $mxServerRoot))
+            {
+                $this->imapHost = 'imap.' . $mxServerRoot;
+            }
+        }
+
+        return $this->imapHost;
     }
 
     /**
