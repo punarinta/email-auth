@@ -36,7 +36,7 @@ $discover = new Discover;
 $config = $discover->imap('your@email');
 echo "IMAP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
 
-$config = $discover->imap('your@email');
+$config = $discover->smtp('your@email');
 echo "SMTP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
 ```
 
