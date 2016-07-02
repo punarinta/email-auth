@@ -12,8 +12,19 @@ class Auth
 {
     private $email;
     private $password;
+    private $config;
 
     public $status = STATUS_NO_LOGIN;
+
+    /**
+     * Auth constructor.
+     * @param bool $tryRestricted
+     */
+    public function __construct($tryRestricted = false)
+    {
+        $this->config = new \stdClass();
+        $this->config->tryRestricted = $tryRestricted;
+    }
 
     /**
      * Tries to find an auth server and login
@@ -43,10 +54,12 @@ class Auth
 
         if (in_array($mxServerRoot, ['google.com', 'outlook.com']))
         {
+            if ($this->config->tryRestricted)
+            {
+                return $this->imapAuth('imap.' . $mxServerRoot);
+            }
+
             $this->status = STATUS_OAUTH_NEEDED;
-
-            // TODO: try direct login, maybe user has unlocked IMAP without OAuth
-
             return false;
         }
 
