@@ -29,7 +29,7 @@ class Discover
         $host = null;
         $domain = explode('@', $email);
 
-        if (Socket::pingPort('imap.' . $domain[1]))
+        if ($port = Socket::pingPort('imap.' . $domain[1], [993, 143]))
         {
             $host = 'imap.' . $domain[1];
         }
@@ -38,11 +38,11 @@ class Discover
             $mxServerDomains = explode('.', $mxServer);
             $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
 
-            if (Socket::pingPort($mxServer))
+            if ($port = Socket::pingPort($mxServer, [993, 143]))
             {
                 $host = $mxServer;
             }
-            else if (Socket::pingPort('imap.' . $mxServerRoot))
+            else if ($port = Socket::pingPort('imap.' . $mxServerRoot, [993, 143]))
             {
                 $host = 'imap.' . $mxServerRoot;
             }
@@ -50,8 +50,9 @@ class Discover
 
         return $host ? array
         (
-            'host' => $host,
-            'port' => 993,
+            'host'       => $host,
+            'port'       => $port,
+            'encryption' =>  993 == $port ? 'ssl' : null,
         ) : null;
     }
 }
