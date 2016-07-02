@@ -2,7 +2,7 @@
   "name": "punarinta/email-auth",
   "description": "Authenticate via an arbitrary email",
   "license": "MIT",
-  "keywords": ["imap"],
+  "keywords": ["auth", "authentication", "dns", "email", "imap"],
   "authors":
   [
     {
