@@ -21,7 +21,6 @@ class Auth
     private $email;
     private $password;
     private $config;
-    private $imapHost = null;
 
     public $status = self::STATUS_NO_LOGIN;
 
@@ -74,75 +73,25 @@ class Auth
         }
 
         // try mail server directly
-        if ($this->pingPort('imap.' . $domain[1]))
+        if (Socket::pingPort('imap.' . $domain[1], 993, $this->config->pingTimeout))
         {
             return $this->imapAuth('imap.' . $domain[1]);
         }
 
         // try MX-server
-        if ($this->pingPort($mxServer))
+        if (Socket::pingPort($mxServer, 993, $this->config->pingTimeout))
         {
             // IMAP server found => try to authenticate
             return $this->imapAuth($mxServer);
         }
 
         // last chance, try MX-server root
-        if ($this->pingPort('imap.' . $mxServerRoot))
+        if (Socket::pingPort('imap.' . $mxServerRoot, 993, $this->config->pingTimeout))
         {
             return $this->imapAuth('imap.' . $mxServerRoot);
         }
 
         return false;
-    }
-
-    /**
-     * Service function to get an address of an associated IMAP server
-     *
-     * @param $email
-     * @return null|string
-     */
-    public function imapHost($email)
-    {
-        $domain = explode('@', $email);
-
-        if ($this->pingPort('imap.' . $domain[1]))
-        {
-            $this->imapHost = 'imap.' . $domain[1];
-        }
-        elseif ($mxServer = Dns::getTopMx($domain[1]))
-        {
-            $mxServerDomains = explode('.', $mxServer);
-            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
-
-            if ($this->pingPort($mxServer))
-            {
-                $this->imapHost = $mxServer;
-            }
-            else if ($this->pingPort('imap.' . $mxServerRoot))
-            {
-                $this->imapHost = 'imap.' . $mxServerRoot;
-            }
-        }
-
-        return $this->imapHost;
-    }
-
-    /**
-     * Tells if port is opened or not
-     *
-     * @param $host
-     * @param int $port
-     * @return bool
-     */
-    private function pingPort($host, $port = 993)
-    {
-        if (!$fp = @fsockopen($host, $port, $errno, $errstr, $this->config->pingTimeout))
-        {
-            return false;
-        }
-
-        fclose($fp);
-        return true;
     }
 
     /**
