@@ -12,6 +12,9 @@ namespace EmailAuth;
 
 class Discover
 {
+    public $mxServer     = null;
+    public $mxServerRoot = null;
+    
     /**
      * Discovers IMAP settings for an email
      *
@@ -76,15 +79,22 @@ class Discover
         $host = null;
         $domain = explode('@', $email);
 
+        if ($mxServer = Dns::getTopMx($domain[1]))
+        {
+            // save MX-server information
+            $mxServerDomains = explode('.', $mxServer);
+            $mxServerRoot = implode('.', array_slice($mxServerDomains, -2, 2));
+
+            $this->mxServer = $mxServer;
+            $this->mxServerRoot = $mxServerRoot;
+        }
+
         if ($port = Socket::pingPort($prefix . $domain[1], $ports))
         {
             $host = $prefix . $domain[1];
         }
-        elseif ($mxServer = Dns::getTopMx($domain[1]))
+        elseif ($mxServer)
         {
-            $mxServerDomains = explode('.', $mxServer);
-            $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
-
             if ($port = Socket::pingPort($mxServer, $ports))
             {
                 $host = $mxServer;
