@@ -10,19 +10,19 @@
 
 namespace EmailAuth;
 
-const STATUS_NO_LOGIN       = -1;       // No login attempt was done
-const STATUS_OK             = 0;        // Successful login
-const STATUS_OAUTH_NEEDED   = 1;        // Email provider will most probably require OAuth
-const STATUS_WRONG_PASSWORD = 2;        // Wrong password
-const STATUS_UNKNOWN        = 3;        // SMTP server was not found
-
 class Auth
 {
+    const STATUS_NO_LOGIN       = -1;       // No login attempt was done
+    const STATUS_OK             = 0;        // Successful login
+    const STATUS_OAUTH_NEEDED   = 1;        // Email provider will most probably require OAuth
+    const STATUS_WRONG_PASSWORD = 2;        // Wrong password
+    const STATUS_UNKNOWN        = 3;        // SMTP server was not found
+
     private $email;
     private $password;
     private $config;
 
-    public $status = STATUS_NO_LOGIN;
+    public $status = self::STATUS_NO_LOGIN;
 
     /**
      * Auth constructor.
@@ -45,7 +45,7 @@ class Auth
     {
         $this->email = $email;
         $this->password = $password;
-        $this->status = STATUS_UNKNOWN;
+        $this->status = self::STATUS_UNKNOWN;
 
         $domain = explode('@', $email);
 
@@ -67,7 +67,7 @@ class Auth
                 return $this->imapAuth('imap.' . $mxServerRoot);
             }
 
-            $this->status = STATUS_OAUTH_NEEDED;
+            $this->status = self::STATUS_OAUTH_NEEDED;
             return false;
         }
 
@@ -122,12 +122,12 @@ class Auth
     {
         if (!$box = @imap_open('{' . $host . ':' . $port . '/imap/ssl/novalidate-cert/readonly}', $this->email, $this->password))
         {
-            $this->status = STATUS_WRONG_PASSWORD;
+            $this->status = self::STATUS_WRONG_PASSWORD;
             return false;
         }
 
         imap_close($box);
-        $this->status = STATUS_OK;
+        $this->status = self::STATUS_OK;
 
         return true;
     }
