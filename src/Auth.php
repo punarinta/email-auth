@@ -41,9 +41,15 @@ class Auth
      * @param $email
      * @param $password
      * @return bool
+     * @throws \Exception
      */
     public function login($email, $password)
     {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            throw new \Exception('Not a valid email');
+        }
+
         $this->email = $email;
         $this->password = $password;
         $this->status = self::STATUS_UNKNOWN;

@@ -16,10 +16,16 @@ class Discover
      * Discovers IMAP settings for an email
      *
      * @param $email
-     * @return null|string
+     * @return array|null
+     * @throws \Exception
      */
     public function imap($email)
     {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            throw new \Exception('Not a valid email');
+        }
+
         $host = null;
         $domain = explode('@', $email);
 
@@ -42,10 +48,10 @@ class Discover
             }
         }
 
-        return array
+        return $host ? array
         (
             'host' => $host,
             'port' => 993,
-        );
+        ) : null;
     }
 }
