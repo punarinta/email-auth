@@ -10,6 +10,7 @@ but for which at the same time an authentication with service providers like Goo
 * Assure "autoload.php" file from vendor directory is included
 
 # Sample usage
+#### Authentication
 ```
 use \EmailAuth\Auth;
 
@@ -26,6 +27,13 @@ else
 {
   // Thou shalt not pass!
 }
+```
+#### Discovery
+```
+use \EmailAuth\Discover;
+$discover = new Discover;
+$config = $discover->imap('your@email');
+echo "IMAP is on {$config['host']}:{$config['post']}\n";
 ```
 
 # Troubleshooting
