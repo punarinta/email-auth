@@ -50,14 +50,20 @@ class Auth
             return false;
         }
 
-        // try opening port 993 on MX-server
+        // try mail server directly
+        if ($this->pingPort('imap.' . $domain[1]))
+        {
+            return $this->imapAuth('imap.' . $domain[1]);
+        }
+
+        // try MX-server
         if ($this->pingPort($mxServer))
         {
             // IMAP server found => try to authenticate
             return $this->imapAuth($mxServer);
         }
 
-        // last chance
+        // last chance, try MX-server root
         if ($this->pingPort('imap.' . $mxServerRoot))
         {
             return $this->imapAuth('imap.' . $mxServerRoot);
