@@ -32,8 +32,12 @@ else
 ```
 use \EmailAuth\Discover;
 $discover = new Discover;
+
 $config = $discover->imap('your@email');
-echo "IMAP is on {$config['host']}:{$config['post']}\n";
+echo "IMAP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
+
+$config = $discover->imap('your@email');
+echo "SMTP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
 ```
 
 # Troubleshooting
