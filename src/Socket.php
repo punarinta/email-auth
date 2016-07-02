@@ -13,21 +13,29 @@ namespace EmailAuth;
 class Socket
 {
     /**
-     * Tells if port is opened or not
+     * Tells if port (or one of the ports) is opened or not
      *
      * @param $host
-     * @param int $port
+     * @param array $ports
      * @param int $timeout
-     * @return bool
+     * @return bool|mixed
      */
-    static public function pingPort($host, $port = 993, $timeout = 1)
+    static public function pingPort($host, $ports = [993], $timeout = 1)
     {
-        if (!$fp = @fsockopen($host, $port, $errno, $errstr, $timeout))
+        if (!is_array($ports))
         {
-            return false;
+            $ports = [$ports];
         }
 
-        fclose($fp);
-        return true;
+        foreach ($ports as $port)
+        {
+            if ($fp = @fsockopen($host, $port, $errno, $errstr, $timeout))
+            {
+                fclose($fp);
+                return $port;
+            }
+        }
+
+        return false;
     }
 }
