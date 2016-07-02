@@ -1,8 +1,8 @@
 {
   "name": "punarinta/email-auth",
-  "description": "Discover IMAP settings, authenticate via email",
+  "description": "Discover IMAP/SMTP settings, authenticate via any email",
   "license": "MIT",
-  "keywords": ["auth", "authentication", "dns", "email", "imap", "discover"],
+  "keywords": ["auth", "authentication", "dns", "email", "imap", "smtp", "discover"],
   "authors":
   [
     {
