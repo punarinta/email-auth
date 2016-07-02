@@ -27,12 +27,13 @@ class Auth
 
     /**
      * Auth constructor.
-     * @param bool $tryRestricted
+     * @param array $cfg
      */
-    public function __construct($tryRestricted = false)
+    public function __construct($cfg = [])
     {
         $this->config = new \stdClass();
-        $this->config->tryRestricted = $tryRestricted;
+        $this->config->tryRestricted = isset ($cfg['tryRestricted']) ? $cfg['tryRestricted'] : false;
+        $this->config->pingTimeout = isset ($cfg['pingTimeout']) ? $cfg['pingTimeout'] : 1;
     }
 
     /**
@@ -135,7 +136,7 @@ class Auth
      */
     private function pingPort($host, $port = 993)
     {
-        if (!$fp = @fsockopen($host, $port, $errno, $errstr, 1))
+        if (!$fp = @fsockopen($host, $port, $errno, $errstr, $this->config->pingTimeout))
         {
             return false;
         }
