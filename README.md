@@ -34,10 +34,10 @@ use \EmailAuth\Discover;
 $discover = new Discover;
 
 $config = $discover->imap('your@email');
-echo "IMAP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
+echo "IMAP is on {$config['host']}:{$config['port']}, encryption is $config['encryption']}\n";
 
 $config = $discover->smtp('your@email');
-echo "SMTP is on {$config['host']}:{$config['post']}, encryption is $config['encryption']}\n";
+echo "SMTP is on {$config['host']}:{$config['port']}, encryption is $config['encryption']}\n";
 ```
 
 # Troubleshooting
