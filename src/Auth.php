@@ -111,7 +111,6 @@ class Auth
 
         imap_close($box);
         $this->status = self::STATUS_OK;
-        $this->imapHost = $host;
 
         return true;
     }
