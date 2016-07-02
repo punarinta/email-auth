@@ -34,6 +34,5 @@ sudo apt-get install php7.0-imap
 sudo phpenmod imap
 ```
 
-
 # License
-This project is licensed under the terms of the **MIT** license.
+This project is licensed under the terms of [**MIT**](https://github.com/punarinta/email-auth/blob/master/LICENSE) license.
