@@ -54,50 +54,31 @@ class Auth
         $this->password = $password;
         $this->status = self::STATUS_UNKNOWN;
 
-        $domain = explode('@', $email);
-
-        if (!$mxServer = Dns::getTopMx($domain[1]))
+        $discover = new Discover;
+        if ($cfg = $discover->imap($email))
         {
-            // no MX record found, try direct login
-            return $this->imapAuth('imap.' . $domain[1]);
-        }
-
-        // assure that it's not Google or some other
-        $mxServerDomains = explode('.', $mxServer);
-
-        $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
-
-        if (in_array($mxServerRoot, ['google.com', 'outlook.com']))
-        {
-            if ($this->config->tryRestricted)
+            if ($discover->mxServerRoot)
             {
-                return $this->imapAuth('imap.' . $mxServerRoot);
+                // assure that it's not Google or some other
+                if (in_array($discover->mxServerRoot, ['google.com', 'outlook.com']))
+                {
+                    if ($this->config->tryRestricted)
+                    {
+                        return $this->imapAuth('imap.' . $discover->mxServerRoot);
+                    }
+
+                    $this->status = self::STATUS_OAUTH_NEEDED;
+                    return false;
+                }
             }
 
-            $this->status = self::STATUS_OAUTH_NEEDED;
-            return false;
+            return $this->imapAuth($cfg['host'], $cfg['port']);
         }
-
-        // try mail server directly
-        if (Socket::pingPort('imap.' . $domain[1], 993, $this->config->pingTimeout))
+        else
         {
+            $domain = explode('@', $email);
             return $this->imapAuth('imap.' . $domain[1]);
         }
-
-        // try MX-server
-        if (Socket::pingPort($mxServer, 993, $this->config->pingTimeout))
-        {
-            // IMAP server found => try to authenticate
-            return $this->imapAuth($mxServer);
-        }
-
-        // last chance, try MX-server root
-        if (Socket::pingPort('imap.' . $mxServerRoot, 993, $this->config->pingTimeout))
-        {
-            return $this->imapAuth('imap.' . $mxServerRoot);
-        }
-
-        return false;
     }
 
     /**
