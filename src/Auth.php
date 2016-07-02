@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Authentication via email class
+ *
+ * @package		EmailAuth
+ * @author		Vladimir Osipov <vladimir.g.osipov@gmail.com>
+ * @license		http://www.opensource.org/licenses/mit-license.php
+ */
+
 namespace EmailAuth;
 
 const STATUS_NO_LOGIN       = -1;       // No login attempt was done

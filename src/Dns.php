@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * DNS helper class
+ *
+ * @package		EmailAuth
+ * @author		Vladimir Osipov <vladimir.g.osipov@gmail.com>
+ * @license		http://www.opensource.org/licenses/mit-license.php
+ */
+
 namespace EmailAuth;
 
 class Dns
