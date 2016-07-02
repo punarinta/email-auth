@@ -41,7 +41,7 @@ class Auth
 
         $mxServerRoot = @implode('.', array_slice($mxServerDomains, -2, 2));
 
-        if (in_array($mxServerRoot, ['google.com']))
+        if (in_array($mxServerRoot, ['google.com', 'outlook.com']))
         {
             $this->status = STATUS_OAUTH_NEEDED;
 
