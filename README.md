@@ -1,5 +1,5 @@
 # EmailAuth
-A library to authenticate via an arbitrary email or/and to discover IMAP settings by email address.
+A library to authenticate via an arbitrary email or/and to discover IMAP/SMTP settings by email address.
 Can be for example used in the projects where one doesn't need to keep a user entity in the database,
 but for which at the same time an authentication with service providers like Google is not enough.
 
