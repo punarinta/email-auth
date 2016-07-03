@@ -90,7 +90,9 @@ class Auth
      */
     private function imapAuth($host, $port = 993)
     {
-        if (!$box = @imap_open('{' . $host . ':' . $port . '/imap/ssl/novalidate-cert/readonly}', $this->email, $this->password))
+        $flags = (993 == $port) ? '/imap/ssl/novalidate-cert/readonly' : '/imap/readonly';
+
+        if (!$box = @imap_open('{' . $host . ':' . $port . $flags . '}', $this->email, $this->password))
         {
             $this->status = self::STATUS_WRONG_PASSWORD;
             return false;
