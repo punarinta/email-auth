@@ -15,7 +15,7 @@ but for which at the same time an authentication with service providers like Goo
 use \EmailAuth\Auth;
 
 $auth = new Auth;
-if ($auth->login('your@email', 'your-passwpord'))
+if ($auth->login('your@email', 'your-password'))
 {
   // You are authenticated.
 }
