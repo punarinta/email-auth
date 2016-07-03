@@ -5,8 +5,7 @@ but for which at the same time an authentication with service providers like Goo
 
 # Installation
 * Install Composer: https://getcomposer.org/download
-* Add ```"punarinta/email-auth": "dev-master"``` line into the "require" section of your composer.json file
-* Run ```php composer.phar install```
+* Run ```php composer.phar require punarinta/email-auth:dev-master```
 * Assure "autoload.php" file from vendor directory is included
 
 # Sample usage
