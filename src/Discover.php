@@ -24,14 +24,24 @@ class Discover
      */
     public function imap($email)
     {
-        list ($host, $port) = $this->analyse($email, 'imap.', [993, 143]);
+        $prefixes = ['imap.', 'mail.', 'pop3.'];
 
-        return $host ? array
-        (
-            'host'       => $host,
-            'port'       => $port,
-            'encryption' => 993 == $port ? 'ssl' : null,
-        ) : null;
+        foreach ($prefixes as $prefix)
+        {
+            list ($host, $port) = $this->analyse($email, $prefix, [993, 143]);
+
+            if ($host && $port)
+            {
+                return array
+                (
+                    'host'       => $host,
+                    'port'       => $port,
+                    'encryption' => 993 == $port ? 'ssl' : null,
+                );
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -43,21 +53,31 @@ class Discover
      */
     public function smtp($email)
     {
-        list ($host, $port) = $this->analyse($email, 'smtp.', [465, 587, 25]);
+        $prefixes = ['smtp.', 'mail.'];
 
-        $encTypes =
-        [
-            25  => null,
-            465 => 'ssl',
-            587 => 'tls',
-        ];
+        foreach ($prefixes as $prefix)
+        {
+            list ($host, $port) = $this->analyse($email, $prefix, [465, 587, 25]);
 
-        return $host ? array
-        (
-            'host'       => $host,
-            'port'       => $port,
-            'encryption' => @$encTypes[$port] ?: null,
-        ) : null;
+            if ($host && $port)
+            {
+                $encTypes =
+                [
+                    25  => null,
+                    465 => 'ssl',
+                    587 => 'tls',
+                ];
+
+                return array
+                (
+                    'host'       => $host,
+                    'port'       => $port,
+                    'encryption' => @$encTypes[$port] ?: null,
+                );
+            }
+        }
+
+        return null;
     }
 
     /**
